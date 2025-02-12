@@ -1,0 +1,59 @@
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { CheckCircle, Circle } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const RoutineTracker = () => {
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState('');
+  const [newTime, setNewTime] = useState('');
+
+  const addTask = () => {
+    if (newTask && newTime) {
+      setTasks([...tasks, { name: newTask, time: newTime, completed: false }]);
+      setNewTask('');
+      setNewTime('');
+    }
+  };
+
+  const toggleCompletion = (index) => {
+    const updatedTasks = tasks.map((task, i) =>
+      i === index ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <motion.h1 className="text-3xl font-bold mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+        Strict Routine Tracker
+      </motion.h1>
+      <div className="mb-4 flex gap-2">
+        <Input placeholder="Task Name" value={newTask} onChange={(e) => setNewTask(e.target.value)} />
+        <Input placeholder="Time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
+        <Button onClick={addTask}>Add Task</Button>
+      </div>
+      <div className="w-full max-w-md">
+        {tasks.map((task, index) => (
+          <motion.div key={index} initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+            <Card className="mb-2">
+              <CardContent className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-semibold">{task.name}</h3>
+                  <p className="text-sm text-gray-500">Time: {task.time}</p>
+                </div>
+                <Button onClick={() => toggleCompletion(index)}>
+                  {task.completed ? <CheckCircle className="text-green-500" /> : <Circle />}
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default RoutineTracker;
