@@ -1,0 +1,67 @@
+import React, { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectTrigger, SelectContent, SelectItem } from '@/components/ui/select';
+import { CheckCircle, Circle, BookOpen, Calendar, Activity } from 'lucide-react';
+import { motion } from 'framer-motion';
+
+const StudyPlanner = () => {
+  const [subjects, setSubjects] = useState([]);
+  const [newSubject, setNewSubject] = useState('');
+  const [difficulty, setDifficulty] = useState('Medium');
+
+  const addSubject = () => {
+    if (newSubject) {
+      setSubjects([...subjects, { name: newSubject, difficulty, completed: false }]);
+      setNewSubject('');
+      setDifficulty('Medium');
+    }
+  };
+
+  const toggleCompletion = (index) => {
+    const updatedSubjects = subjects.map((sub, i) =>
+      i === index ? { ...sub, completed: !sub.completed } : sub
+    );
+    setSubjects(updatedSubjects);
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex flex-col items-center p-6">
+      <motion.h1 className="text-4xl font-bold mb-4 text-purple-800" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1 }}>
+        AI Study Planner
+      </motion.h1>
+      <div className="mb-4 flex gap-2">
+        <Input placeholder="Subject Name" value={newSubject} onChange={(e) => setNewSubject(e.target.value)} />
+        <Select value={difficulty} onValueChange={setDifficulty}>
+          <SelectTrigger>{difficulty}</SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Easy">Easy</SelectItem>
+            <SelectItem value="Medium">Medium</SelectItem>
+            <SelectItem value="Hard">Hard</SelectItem>
+          </SelectContent>
+        </Select>
+        <Button onClick={addSubject} className="bg-purple-600 hover:bg-purple-700 text-white">Add Subject</Button>
+      </div>
+      <div className="w-full max-w-md">
+        {subjects.map((sub, index) => (
+          <motion.div key={index} initial={{ x: -50, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.5 }}>
+            <Card className="mb-2 shadow-xl">
+              <CardContent className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-800">{sub.name}</h3>
+                  <p className="text-sm text-gray-600">Difficulty: {sub.difficulty}</p>
+                </div>
+                <Button onClick={() => toggleCompletion(index)}>
+                  {sub.completed ? <CheckCircle className="text-green-500" /> : <Circle />}
+                </Button>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default StudyPlanner;
